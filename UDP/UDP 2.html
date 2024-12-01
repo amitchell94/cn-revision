@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networking Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        .btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question" class="question"></div>
+        <div id="options"></div>
+        <button class="btn" onclick="submitAnswer()">Submit Answer</button>
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script>
+        const quizData = [
+    {
+        "question": "What layer is the IP protocol?",
+        "options": [
+            "Network",
+            "Transport",
+            "Data link",
+            "Application"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the primary role of the UDP protocol?",
+        "options": [
+            "Reliable data transfer",
+            "Fast, connectionless communication",
+            "Routing packets",
+            "Network error detection"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What identifies the queues opened by the client in UDP?",
+        "options": [
+            "MAC address",
+            "Well-known ports",
+            "Ephemeral port numbers",
+            "Process name"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What happens to client queues when the process terminates?",
+        "options": [
+            "They remain open until manually closed",
+            "They are destroyed",
+            "They are reassigned to another process",
+            "They are archived"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the state of a control block entry that is available for a new port number?",
+        "options": [
+            "IN-USE",
+            "ACTIVE",
+            "FREE",
+            "CLOSED"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the responsibility of the control block module in UDP?",
+        "options": [
+            "Allocating memory for UDP datagrams",
+            "Managing the control block table",
+            "Establishing connections between client and server",
+            "Closing queues when a process terminates"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What does the control block module do when no FREE entry is found?",
+        "options": [
+            "Rejects the process request",
+            "Creates a new entry with the state FREE",
+            "Deletes an entry using a predefined strategy",
+            "Allocates a new queue"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "Which of the following fields is not part of a control block table entry?",
+        "options": [
+            "State",
+            "Process ID",
+            "IP address",
+            "Port number"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What happens when a UDP datagram arrives and no corresponding entry is found in the control block table?",
+        "options": [
+            "It is forwarded to the default queue",
+            "It is discarded",
+            "It is logged for debugging",
+            "It generates an error response"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the role of the input module in UDP?",
+        "options": [
+            "Managing the control block table",
+            "Receiving UDP datagrams and allocating queues",
+            "Sending outgoing datagrams",
+            "Establishing client-server connections"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What happens if the queue field is empty for a matching control block entry?",
+        "options": [
+            "The datagram is discarded",
+            "The queue is allocated",
+            "The port is closed",
+            "An error message is sent"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "How does the server identify its queues?",
+        "options": [
+            "Using ephemeral port numbers",
+            "Using well-known ports",
+            "Using process IDs",
+            "Using state field values"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What module is responsible for managing outgoing datagrams in UDP?",
+        "options": [
+            "Control block module",
+            "Input module",
+            "Output module",
+            "Queue management module"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What does the control block table track?",
+        "options": [
+            "Incoming IP addresses",
+            "UDP protocol states",
+            "Open ports and corresponding queues",
+            "Network routes"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is assigned to each process when it starts?",
+        "options": [
+            "A queue",
+            "A control block table entry",
+            "A port number",
+            "A UDP datagram"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What happens if a datagram is received for a dead process?",
+        "options": [
+            "It is forwarded to a backup process",
+            "It is stored for later retrieval",
+            "It is discarded",
+            "An error message is returned"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What ensures the uniqueness of queues for a port number?",
+        "options": [
+            "Process ID",
+            "State field in control block",
+            "Queue number",
+            "Lock table"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the typical state of a new entry in the control block table?",
+        "options": [
+            "FREE",
+            "IN-USE",
+            "ALLOCATED",
+            "NEW"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What action is taken when a process terminates?",
+        "options": [
+            "Queues are reassigned",
+            "Queues are destroyed",
+            "Queues are archived",
+            "Queues are left open"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "How does the UDP protocol handle error detection?",
+        "options": [
+            "It uses a checksum for basic error detection",
+            "It does not handle error detection",
+            "It relies on IP for error detection",
+            "It retries transmissions on error"
+        ],
+        "correct": 0
+    }
+]
+
+;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            document.getElementById("question").innerText = currentQuestion.question;
+
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.className = "option";
+                optionElement.innerHTML = `
+                    <label>
+                        <input type="radio" name="option" value="${index}"> ${option}
+                    </label>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function submitAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const answer = parseInt(selectedOption.value);
+            if (answer === quizData[currentQuestionIndex].correct) {
+                score++;
+                document.getElementById("result").innerText = "Correct!";
+            } else {
+                document.getElementById("result").innerText = "Incorrect. The correct answer was: " + quizData[currentQuestionIndex].options[quizData[currentQuestionIndex].correct];
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                setTimeout(() => {
+                    document.getElementById("result").innerText = "";
+                    loadQuestion();
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    document.querySelector(".quiz-container").innerHTML = `<h2>Your Score: ${score} / ${quizData.length}</h2>`;
+                }, 1500);
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

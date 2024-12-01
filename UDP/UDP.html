@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networking Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        .btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question" class="question"></div>
+        <div id="options"></div>
+        <button class="btn" onclick="submitAnswer()">Submit Answer</button>
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script>
+        const quizData = [
+    {
+        "question": "What layer is the IP protocol?",
+        "options": [
+            "Network",
+            "Transport",
+            "Data link",
+            "Application"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the primary role of UDP in the transport layer?",
+        "options": [
+            "Host-to-host communication",
+            "Flow control",
+            "Error correction",
+            "Process-to-process communication"
+        ],
+        "correct": 3
+    },
+    {
+        "question": "What kind of protocol is UDP?",
+        "options": [
+            "Connection-oriented",
+            "Connectionless",
+            "Reliable",
+            "Stateful"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which mechanism is missing in UDP?",
+        "options": [
+            "Error detection",
+            "Checksum verification",
+            "Flow control",
+            "Port numbers"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What uniquely defines a client process?",
+        "options": [
+            "Destination IP address",
+            "Source port number",
+            "Client socket address",
+            "Server port number"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the primary function of port numbers in UDP?",
+        "options": [
+            "Defining host addresses",
+            "Error correction",
+            "Identifying processes",
+            "Ensuring reliable delivery"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "Which port number range is reserved for well-known ports?",
+        "options": [
+            "0 to 1023",
+            "1024 to 49151",
+            "49152 to 65535",
+            "None of the above"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "Who controls the well-known port numbers?",
+        "options": [
+            "IANA",
+            "ICANN",
+            "IEEE",
+            "ISO"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What does a socket address consist of?",
+        "options": [
+            "IP address only",
+            "Port number only",
+            "IP address and port number",
+            "Port number and protocol"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the size of the UDP header?",
+        "options": [
+            "4 bytes",
+            "8 bytes",
+            "12 bytes",
+            "16 bytes"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "How is the UDP length calculated?",
+        "options": [
+            "UDP length = IP header length - IP data length",
+            "UDP length = IP length - IP header length",
+            "UDP length = Total length - IP header length",
+            "UDP length = UDP data length + checksum length"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which field in the UDP header is used for error detection?",
+        "options": [
+            "Source port",
+            "Destination port",
+            "Length",
+            "Checksum"
+        ],
+        "correct": 3
+    },
+    {
+        "question": "What type of port number is typically used by clients?",
+        "options": [
+            "Well-known",
+            "Registered",
+            "Dynamic/Ephemeral",
+            "Private"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What type of port number is typically used by servers?",
+        "options": [
+            "Well-known",
+            "Registered",
+            "Dynamic/Ephemeral",
+            "Private"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What does the destination IP address define?",
+        "options": [
+            "A specific process",
+            "The host",
+            "The network layer",
+            "The data link"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What type of service does UDP provide?",
+        "options": [
+            "Connection-oriented",
+            "Connectionless",
+            "Reliable",
+            "Flow-controlled"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What field in the UDP header indicates the total size of the datagram?",
+        "options": [
+            "Source port",
+            "Destination port",
+            "Length",
+            "Checksum"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What does the source port number represent when the source host is a client?",
+        "options": [
+            "Well-known port number",
+            "Registered port number",
+            "Dynamic/Ephemeral port number",
+            "Private port number"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What does the combination of IP address and port number define?",
+        "options": [
+            "Socket address",
+            "Packet identifier",
+            "Datagram length",
+            "Checksum"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the checksum used for in the UDP header?",
+        "options": [
+            "To detect errors",
+            "To calculate length",
+            "To assign port numbers",
+            "To manage flow control"
+        ],
+        "correct": 0
+    }
+]
+;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            document.getElementById("question").innerText = currentQuestion.question;
+
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.className = "option";
+                optionElement.innerHTML = `
+                    <label>
+                        <input type="radio" name="option" value="${index}"> ${option}
+                    </label>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function submitAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const answer = parseInt(selectedOption.value);
+            if (answer === quizData[currentQuestionIndex].correct) {
+                score++;
+                document.getElementById("result").innerText = "Correct!";
+            } else {
+                document.getElementById("result").innerText = "Incorrect. The correct answer was: " + quizData[currentQuestionIndex].options[quizData[currentQuestionIndex].correct];
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                setTimeout(() => {
+                    document.getElementById("result").innerText = "";
+                    loadQuestion();
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    document.querySelector(".quiz-container").innerHTML = `<h2>Your Score: ${score} / ${quizData.length}</h2>`;
+                }, 1500);
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

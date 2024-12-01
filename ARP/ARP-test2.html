@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networking Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        .btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question" class="question"></div>
+        <div id="options"></div>
+        <button class="btn" onclick="submitAnswer()">Submit Answer</button>
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script>
+        const quizData = [
+    {
+        "question": "What does ARP stand for?",
+        "options": [
+            "Address Resolution Protocol",
+            "Automatic Routing Process",
+            "Advanced Repeater Protocol",
+            "Active Response Procedure"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the purpose of the ARP cache table?",
+        "options": [
+            "To store previously resolved IP-to-physical address mappings",
+            "To route packets to the correct destination",
+            "To monitor network traffic",
+            "To increase bandwidth"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "Which of the following is NOT a column in the ARP cache table?",
+        "options": [
+            "State",
+            "Queue",
+            "Protocol Address",
+            "Data Speed"
+        ],
+        "correct": 3
+    },
+    {
+        "question": "What are the three possible states of an entry in the ARP cache table?",
+        "options": [
+            "Pending, Free, Resolved",
+            "Queued, Active, Free",
+            "Pending, Result, Free",
+            "Active, Resolved, Expired"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What does the 'Timeout' column in the ARP cache table represent?",
+        "options": [
+            "The time until the ARP packet is sent",
+            "The time-to-live for a cache entry",
+            "The duration an entry is pending",
+            "The wait time before attempting another resolution"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What happens if an entry in the ARP cache table reaches the 'Free' state?",
+        "options": [
+            "The entry is deleted immediately",
+            "The entry is moved to a new queue",
+            "The entry can be reused for new packets",
+            "The state changes to Pending"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What triggers the Output module to wake up?",
+        "options": [
+            "Receiving an IP packet",
+            "Timeout expiration",
+            "Receiving an ARP request",
+            "Queue overflow"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What does the Output module do when it finds an entry in the cache table in the 'Pending' state?",
+        "options": [
+            "Sends the packet to the hardware address",
+            "Enqueues the packet in the corresponding queue",
+            "Creates a new entry in the cache table",
+            "Deletes the entry"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which module is responsible for responding to ARP requests?",
+        "options": [
+            "Cache-control module",
+            "Output module",
+            "Input module",
+            "Routing module"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What happens when the Input module receives an ARP reply?",
+        "options": [
+            "It creates a new entry in the cache table",
+            "It updates the corresponding entry in the cache table",
+            "It sends another ARP request",
+            "It deletes the old cache entry"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "How many attempts to find a hardware address are allowed before an entry is dropped (in the class example)?",
+        "options": [
+            "3",
+            "5",
+            "7",
+            "10"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is stored in the 'Hardware Address' column of the cache table?",
+        "options": [
+            "The IP address of the target",
+            "The MAC address of the target",
+            "The ARP packet",
+            "The queue number"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What happens if no corresponding entry is found in the cache table for an incoming IP packet?",
+        "options": [
+            "The packet is dropped",
+            "A new entry is created in the Pending state",
+            "An ARP reply is sent",
+            "The cache table is reset"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which module controls the ARP cache table?",
+        "options": [
+            "Cache-control module",
+            "Output module",
+            "Input module",
+            "Queue module"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What does the 'Attempt' column in the ARP cache table indicate?",
+        "options": [
+            "The number of times the hardware address was resolved",
+            "The number of ARP requests sent for an entry",
+            "The number of packets enqueued",
+            "The timeout duration for the entry"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What does the ARP Output module do if it does not find an entry in the cache table?",
+        "options": [
+            "Creates a cache entry in the Pending state and sends an ARP request",
+            "Drops the packet",
+            "Forwards the packet to the next router",
+            "Creates a cache entry in the Resolved state"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "How does the ARP Input module respond to a request that does not match its IP address?",
+        "options": [
+            "Sends an ARP reply",
+            "Drops the request",
+            "Creates a new cache entry",
+            "Sends an ICMP error"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the purpose of ARP queues?",
+        "options": [
+            "To prioritize ARP requests",
+            "To store packets waiting for address resolution",
+            "To manage resolved addresses",
+            "To store MAC addresses"
+        ],
+        "correct": 1
+    },
+	{
+        "question": "What does the 'Pending' state in the cache table signify?",
+        "options": [
+            "The entry is ready to use",
+            "A request has been sent but no reply received yet",
+            "The entry is free for new use",
+            "The entry has expired"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which module in ARP enqueues packets waiting for address resolution?",
+        "options": [
+            "Input module",
+            "Cache-control module",
+            "Output module",
+            "Queue module"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What happens if a hardware address is found in the cache table with the 'Result' state?",
+        "options": [
+            "The packet is discarded",
+            "An ARP request is sent",
+            "The packet and hardware address are sent to the datalink layer",
+            "The entry is updated"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the maximum number of ARP requests allowed for an entry?",
+        "options": [
+            "3",
+            "5",
+            "10",
+            "Unlimited"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the function of the 'Input module' in ARP?",
+        "options": [
+            "To create new ARP requests",
+            "To process incoming ARP packets",
+            "To resolve IP addresses into MAC addresses",
+            "To update the protocol stack"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which columns in the cache table are specific to the 'Result' state?",
+        "options": [
+            "Protocol address and Queue",
+            "Hardware address and Timeout",
+            "Protocol address and Hardware address",
+            "State and Attempts"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What does the cache-control module in ARP handle?",
+        "options": [
+            "Manages the state and timeout of cache entries",
+            "Sends ARP requests",
+            "Routes packets to the correct module",
+            "Updates the datalink layer"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What happens when the timeout of an entry in the cache table expires?",
+        "options": [
+            "The entry is updated",
+            "The entry is marked as 'Pending'",
+            "The entry is deleted or marked 'Free'",
+            "The entry is sent to the datalink layer"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What does the ARP output module do when no corresponding cache entry is found for a packet?",
+        "options": [
+            "Discards the packet",
+            "Sends an ARP request and creates a new cache entry",
+            "Marks the packet as pending",
+            "Sends the packet directly to the datalink layer"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "In ARP, what does the 'Attempt' column in the cache table represent?",
+        "options": [
+            "Number of IP addresses resolved",
+            "Number of ARP requests sent",
+            "Lifetime of the cache entry",
+            "Total packets in the queue"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the maximum timeout value for a cache table entry (in seconds) as discussed in class?",
+        "options": [
+            "500 seconds",
+            "900 seconds",
+            "1200 seconds",
+            "1800 seconds"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What happens to packets waiting for resolution in a queue when the hardware address is found?",
+        "options": [
+            "They are dropped",
+            "They are sent to the datalink layer",
+            "They remain in the queue",
+            "They are marked as 'Pending'"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the role of the 'Output module' when an IP packet arrives?",
+        "options": [
+            "Checks the cache table and handles the packet accordingly",
+            "Directly sends the packet to the datalink layer",
+            "Creates a new ARP request",
+            "Updates the cache table"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What does the 'Protocol address' column in the cache table store?",
+        "options": [
+            "The sender's IP address",
+            "The target's IP address",
+            "The router's IP address",
+            "The gateway's IP address"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What action does the input module take upon receiving an ARP reply?",
+        "options": [
+            "Creates a new cache entry",
+            "Updates an existing cache entry and resolves pending packets",
+            "Discards the ARP packet",
+            "Sends another ARP request"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What should the input module do if the received ARP packet is a request?",
+        "options": [
+            "Discard it immediately",
+            "Send an ARP reply if the IP matches",
+            "Update the cache table",
+            "Ignore the request"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Why are queues used in ARP?",
+        "options": [
+            "To store resolved IP addresses",
+            "To enqueue packets waiting for address resolution",
+            "To monitor the state of the cache table",
+            "To store ARP requests temporarily"
+        ],
+        "correct": 1
+    }
+]
+;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            document.getElementById("question").innerText = currentQuestion.question;
+
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.className = "option";
+                optionElement.innerHTML = `
+                    <label>
+                        <input type="radio" name="option" value="${index}"> ${option}
+                    </label>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function submitAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const answer = parseInt(selectedOption.value);
+            if (answer === quizData[currentQuestionIndex].correct) {
+                score++;
+                document.getElementById("result").innerText = "Correct!";
+            } else {
+                document.getElementById("result").innerText = "Incorrect. The correct answer was: " + quizData[currentQuestionIndex].options[quizData[currentQuestionIndex].correct];
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                setTimeout(() => {
+                    document.getElementById("result").innerText = "";
+                    loadQuestion();
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    document.querySelector(".quiz-container").innerHTML = `<h2>Your Score: ${score} / ${quizData.length}</h2>`;
+                }, 1500);
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

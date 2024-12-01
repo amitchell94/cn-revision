@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networking Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        .btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question" class="question"></div>
+        <div id="options"></div>
+        <button class="btn" onclick="submitAnswer()">Submit Answer</button>
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script>
+        const quizData = [
+    {
+        "question": "What layer is the IP protocol?",
+        "options": ["Network", "Transport", "Data link", "Application"],
+        "correct": 0
+    },
+    {
+        "question": "What does TCP use to identify processes?",
+        "options": ["IP addresses", "Port numbers", "MAC addresses", "Sequence numbers"],
+        "correct": 1
+    },
+    {
+        "question": "What type of transport protocol is TCP?",
+        "options": ["Connectionless and unreliable", "Connection-oriented and reliable", "Connectionless and reliable", "Connection-oriented and unreliable"],
+        "correct": 1
+    },
+    {
+        "question": "Which of the following describes TCP's data delivery method?",
+        "options": ["Packets", "Frames", "Stream of bytes", "Datagrams"],
+        "correct": 2
+    },
+    {
+        "question": "What does TCP call its data unit at the transport layer?",
+        "options": ["Frame", "Segment", "Packet", "Datagram"],
+        "correct": 1
+    },
+    {
+        "question": "What kind of service does TCP provide?",
+        "options": ["Full duplex", "Half duplex", "Simplex", "Broadcast"],
+        "correct": 0
+    },
+    {
+        "question": "What is the purpose of the TCP sequence number?",
+        "options": ["Identify the segment number", "Identify the first byte in the segment", "Identify the destination port", "Identify the window size"],
+        "correct": 1
+    },
+    {
+        "question": "What mechanism does TCP use to ensure reliability?",
+        "options": ["Error correction", "Acknowledgement", "Sequence numbers", "Port numbers"],
+        "correct": 1
+    },
+    {
+        "question": "What does the TCP acknowledgment number represent?",
+        "options": ["The total number of bytes sent", "The last byte successfully received", "The number of lost packets", "The size of the segment"],
+        "correct": 1
+    },
+    {
+        "question": "How does TCP handle flow control?",
+        "options": ["Using congestion control", "Using window size", "Using sequence numbers", "Using port numbers"],
+        "correct": 1
+    },
+    {
+        "question": "Which field determines the size of the sliding window?",
+        "options": ["Sequence number", "Receiver window (rwnd)", "Acknowledgment number", "Source port"],
+        "correct": 1
+    },
+    {
+        "question": "What does TCP use to determine network congestion?",
+        "options": ["Sequence numbers", "Congestion window (cwnd)", "Receiver window (rwnd)", "Window size"],
+        "correct": 1
+    },
+    {
+        "question": "Why is shrinking the TCP sliding window discouraged?",
+        "options": ["It reduces performance", "It blocks previously allowed bytes", "It increases congestion", "It wastes bandwidth"],
+        "correct": 1
+    },
+    {
+        "question": "What is the minimum size of a TCP header?",
+        "options": ["20 bytes", "40 bytes", "60 bytes", "80 bytes"],
+        "correct": 0
+    },
+    {
+        "question": "What does the SYN flag in the TCP control field indicate?",
+        "options": ["Urgent data", "Acknowledgement", "Synchronization of sequence numbers", "Window size adjustment"],
+        "correct": 2
+    },
+    {
+        "question": "What is the function of the ACK flag in the TCP header?",
+        "options": ["Acknowledges urgent data", "Indicates a SYN request", "Uses the acknowledgment field", "Indicates end of connection"],
+        "correct": 2
+    },
+    {
+        "question": "Which field in the TCP header contains the first byte number of data in a segment?",
+        "options": ["Sequence number", "Acknowledgement number", "Control field", "Window size"],
+        "correct": 0
+    },
+    {
+        "question": "What does the term cumulative mean in the context of TCP acknowledgements?",
+        "options": [
+            "Bytes are acknowledged individually",
+            "All bytes up to a number are acknowledged",
+            "Acknowledges only the segment received",
+            "Acknowledges only urgent data"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the range of a TCP header's size in bytes?",
+        "options": ["20 to 60 bytes", "40 to 80 bytes", "60 to 100 bytes", "10 to 50 bytes"],
+        "correct": 0
+    },
+    {
+        "question": "What defines the maximum amount of data that TCP can send without waiting for an acknowledgment?",
+        "options": ["Congestion window", "Receiver window", "Window size", "Header length"],
+        "correct": 2
+    }
+]
+
+;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            document.getElementById("question").innerText = currentQuestion.question;
+
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.className = "option";
+                optionElement.innerHTML = `
+                    <label>
+                        <input type="radio" name="option" value="${index}"> ${option}
+                    </label>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function submitAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const answer = parseInt(selectedOption.value);
+            if (answer === quizData[currentQuestionIndex].correct) {
+                score++;
+                document.getElementById("result").innerText = "Correct!";
+            } else {
+                document.getElementById("result").innerText = "Incorrect. The correct answer was: " + quizData[currentQuestionIndex].options[quizData[currentQuestionIndex].correct];
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                setTimeout(() => {
+                    document.getElementById("result").innerText = "";
+                    loadQuestion();
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    document.querySelector(".quiz-container").innerHTML = `<h2>Your Score: ${score} / ${quizData.length}</h2>`;
+                }, 1500);
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

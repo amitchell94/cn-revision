@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networking Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        .btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question" class="question"></div>
+        <div id="options"></div>
+        <button class="btn" onclick="submitAnswer()">Submit Answer</button>
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script>
+        const quizData = [
+    {
+        "question": "What does ARP stand for?",
+        "options": [
+            "Address Resolution Protocol",
+            "Automatic Routing Process",
+            "Advanced Repeater Protocol",
+            "Active Response Procedure"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "Which layer of the OSI model does ARP operate on?",
+        "options": [
+            "Physical layer",
+            "Data link layer",
+            "Network layer",
+            "Transport layer"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the primary purpose of ARP?",
+        "options": [
+            "To resolve an IP address to a MAC address",
+            "To resolve a MAC address to an IP address",
+            "To establish a secure connection",
+            "To route data packets"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the encapsulation format of ARP packets?",
+        "options": [
+            "Ethernet frame",
+            "TCP segment",
+            "IP datagram",
+            "UDP packet"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the hardware address used in the frame for broadcasting ARP requests?",
+        "options": [
+            "00:00:00:00:00:00",
+            "FF:FF:FF:FF:FF:FF",
+            "11:22:33:44:55:66",
+            "Broadcast addresses are not used in ARP"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the operation field value in an ARP request?",
+        "options": [
+            "0",
+            "1",
+            "2",
+            "3"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the operation field value in an ARP reply?",
+        "options": [
+            "0",
+            "1",
+            "2",
+            "3"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What type of ARP acts on behalf of a set of hosts?",
+        "options": [
+            "Dynamic ARP",
+            "Reverse ARP",
+            "Proxy ARP",
+            "Gratuitous ARP"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What does an ARP proxy do when it receives an ARP request?",
+        "options": [
+            "Sends an error message to the sender",
+            "Announces its own physical address in an ARP reply",
+            "Drops the packet",
+            "Forwards the request to another router"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What happens to an ARP request packet at the target device?",
+        "options": [
+            "It is discarded by the target device",
+            "It triggers the target device to send a unicast ARP reply with its MAC address",
+            "It triggers the target device to send a broadcast ARP reply",
+            "It is encapsulated and forwarded to another device"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What type of address is resolved by ARP?",
+        "options": [
+            "IP address",
+            "Domain name",
+            "MAC address",
+            "Gateway address"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the next step after the sender receives an ARP reply?",
+        "options": [
+            "The sender broadcasts another ARP request",
+            "The sender drops the ARP reply",
+            "The sender encapsulates the IP datagram into a frame and unicasts it to the target",
+            "The sender forwards the ARP reply to all devices on the network"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What determines the length of an ARP packet?",
+        "options": [
+            "The protocol type only",
+            "The hardware type only",
+            "Both hardware and protocol type",
+            "The encapsulating IP datagram length"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "Which of the following is true about ARP packets for IPv4 over Ethernet?",
+        "options": [
+            "They have a variable length based on the hardware type",
+            "They have a fixed length",
+            "They are only used in secure networks",
+            "They are not used for IPv4"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What does a device do with an ARP request if the target IP address does not match its own?",
+        "options": [
+            "Drops the ARP request",
+            "Sends an ARP reply",
+            "Broadcasts the request further",
+            "Replaces the target IP address with its own"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What does the sender include in an ARP request packet?",
+        "options": [
+            "The target's MAC address",
+            "Its own MAC address and IP address",
+            "Only the target's IP address",
+            "Only its own IP address"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "How does an ARP reply differ from an ARP request?",
+        "options": [
+            "The ARP reply is sent as a broadcast",
+            "The ARP reply is sent as a unicast",
+            "The ARP reply contains no hardware addresses",
+            "The ARP reply is sent over the transport layer"
+        ],
+        "correct": 1
+    }
+]
+;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            document.getElementById("question").innerText = currentQuestion.question;
+
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.className = "option";
+                optionElement.innerHTML = `
+                    <label>
+                        <input type="radio" name="option" value="${index}"> ${option}
+                    </label>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function submitAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const answer = parseInt(selectedOption.value);
+            if (answer === quizData[currentQuestionIndex].correct) {
+                score++;
+                document.getElementById("result").innerText = "Correct!";
+            } else {
+                document.getElementById("result").innerText = "Incorrect. The correct answer was: " + quizData[currentQuestionIndex].options[quizData[currentQuestionIndex].correct];
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                setTimeout(() => {
+                    document.getElementById("result").innerText = "";
+                    loadQuestion();
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    document.querySelector(".quiz-container").innerHTML = `<h2>Your Score: ${score} / ${quizData.length}</h2>`;
+                }, 1500);
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

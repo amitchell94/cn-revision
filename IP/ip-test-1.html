@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networking Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        .btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question" class="question"></div>
+        <div id="options"></div>
+        <button class="btn" onclick="submitAnswer()">Submit Answer</button>
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script>
+        const quizData = [
+		{
+        "question": "What does MTU stand for?",
+        "options": [
+            "Maximum Transfer Unit",
+            "Minimum Transmission Unit",
+            "Maximum Transmission Unit",
+            "Minimum Transfer Unit"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the maximum size of an IP datagram?",
+        "options": [
+            "65536 bytes",
+            "65535 bytes",
+            "65534 bytes",
+            "65530 bytes"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What happens when an IP datagram is larger than the MTU of a network?",
+        "options": [
+            "It is dropped",
+            "It is fragmented",
+            "It is reassembled",
+            "It is transmitted without change"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the purpose of the Identification field in the IP header?",
+        "options": [
+            "Defines the length of the header",
+            "Identifies the source host",
+            "Identifies datagrams for fragmentation and reassembly",
+            "Specifies the size of the MTU"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the function of the 'Do Not Fragment' (DF) bit in the Flags field?",
+        "options": [
+            "Prevents fragmentation when set to 1",
+            "Allows fragmentation when set to 1",
+            "Marks the last fragment",
+            "Marks the first fragment"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What does the 'More Fragments' (MF) bit indicate when set to 1?",
+        "options": [
+            "This is the last fragment",
+            "There are more fragments following",
+            "Fragmentation is not allowed",
+            "This is the only fragment"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "How is the Fragmentation Offset calculated?",
+        "options": [
+            "Based on the datagram length in units of 8 bytes",
+            "Based on the datagram length in units of 4 bytes",
+            "Based on the header length in units of 8 bytes",
+            "Based on the header length in units of 4 bytes"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What value does the Fragmentation Offset field contain for the first fragment?",
+        "options": [
+            "0",
+            "1",
+            "8",
+            "16"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What happens to the 'More Fragments' (MF) bit for the last fragment?",
+        "options": [
+            "It is set to 0",
+            "It is set to 1",
+            "It remains unchanged",
+            "It is reserved"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is added to each fragment during fragmentation?",
+        "options": [
+            "A new header",
+            "A new MTU",
+            "A checksum",
+            "An offset"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What layer is the IP protocol?",
+        "options": ["Network", "Transport", "Data link", "Application"],
+        "correct": 0
+    },
+    {
+        "question": "What type of protocol is IP?",
+        "options": ["Reliable", "Unreliable", "Connection-oriented", "Secure"],
+        "correct": 1
+    },
+    {
+        "question": "What is the main unit of data in the IP layer?",
+        "options": ["Packet", "Datagram", "Frame", "Segment"],
+        "correct": 1
+    },
+    {
+        "question": "What is the length of the IP header?",
+        "options": ["20-60 bytes", "15-45 bytes", "10-50 bytes", "25-65 bytes"],
+        "correct": 0
+    },
+    {
+        "question": "Which field in the IP header specifies the version of the protocol?",
+        "options": ["VER", "HLEN", "Protocol", "Header checksum"],
+        "correct": 0
+    },
+    {
+        "question": "What is the function of the Time to Live (TTL) field in the IP header?",
+        "options": [
+            "Defines the header length",
+            "Limits the lifetime of a datagram",
+            "Specifies the priority of a datagram",
+            "Identifies the sender's IP address"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which protocol uses the protocol number 6 in the IP header?",
+        "options": ["UDP", "TCP", "ICMP", "OSPF"],
+        "correct": 1
+    },
+    {
+        "question": "What does the Differentiated Services (DS) field in the IP header indicate?",
+        "options": [
+            "Service type and precedence",
+            "Datagram size",
+            "Error detection",
+            "Source IP address"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the maximum size of an IP datagram?",
+        "options": ["65535 bytes", "65536 bytes", "65534 bytes", "65530 bytes"],
+        "correct": 0
+    },
+    {
+        "question": "What is stored in the Source IP address field of the IP header?",
+        "options": [
+            "The IP address of the receiver",
+            "The IP address of the sender",
+            "The IP address of the last router",
+            "The next hop IP address"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the purpose of the Header checksum in the IP header?",
+        "options": [
+            "Ensures correct routing",
+            "Detects errors in the header",
+            "Controls datagram lifetime",
+            "Specifies the next protocol"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which part of the IP header is optional?",
+        "options": ["VER", "HLEN", "Options", "Total Length"],
+        "correct": 2
+    },
+    {
+        "question": "Which IP header field is used to trace the route a datagram takes?",
+        "options": ["Options", "Flags", "Identification", "TTL"],
+        "correct": 0
+    },
+    {
+        "question": "How is the IP header length calculated?",
+        "options": [
+            "Multiply HLEN by 4",
+            "Multiply VER by 4",
+            "Multiply TTL by 8",
+            "Multiply DS by 4"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What does the Fragment Offset field represent?",
+        "options": [
+            "Position of the fragment in the datagram",
+            "Length of the fragment",
+            "Priority of the datagram",
+            "TTL value of the datagram"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the precedence range for the Differentiated Service field?",
+        "options": ["0-7", "0-15", "0-255", "0-3"],
+        "correct": 0
+    },
+    {
+        "question": "Which of these is NOT part of the mandatory IP header fields?",
+        "options": [
+            "Source IP address",
+            "Options",
+            "Destination IP address",
+            "Protocol"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the purpose of the DS field's TOS subfield?",
+        "options": [
+            "Specifies the datagram's delay sensitivity",
+            "Identifies the next protocol",
+            "Checks for errors in the datagram",
+            "Specifies the fragment's offset"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the protocol number for UDP in the IP header?",
+        "options": ["6", "17", "1", "89"],
+        "correct": 1
+    },
+    {
+        "question": "What does the Total Length field in the IP header include?",
+        "options": [
+            "Header only",
+            "Data only",
+            "Header and data",
+            "Options only"
+        ],
+        "correct": 2
+    }
+]
+;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            document.getElementById("question").innerText = currentQuestion.question;
+
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.className = "option";
+                optionElement.innerHTML = `
+                    <label>
+                        <input type="radio" name="option" value="${index}"> ${option}
+                    </label>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function submitAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const answer = parseInt(selectedOption.value);
+            if (answer === quizData[currentQuestionIndex].correct) {
+                score++;
+                document.getElementById("result").innerText = "Correct!";
+            } else {
+                document.getElementById("result").innerText = "Incorrect. The correct answer was: " + quizData[currentQuestionIndex].options[quizData[currentQuestionIndex].correct];
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                setTimeout(() => {
+                    document.getElementById("result").innerText = "";
+                    loadQuestion();
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    document.querySelector(".quiz-container").innerHTML = `<h2>Your Score: ${score} / ${quizData.length}</h2>`;
+                }, 1500);
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

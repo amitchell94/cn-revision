@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networking Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        .btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question" class="question"></div>
+        <div id="options"></div>
+        <button class="btn" onclick="submitAnswer()">Submit Answer</button>
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script>
+        const quizData = [
+    {
+        "question": "What layer is the IP protocol?",
+        "options": [
+            "Network",
+            "Transport",
+            "Data link",
+            "Application"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the primary purpose of the IP protocol?",
+        "options": [
+            "Provide reliable data transfer",
+            "Route and deliver packets",
+            "Encrypt data for security",
+            "Establish a session between hosts"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the first step in the Header Adding Module?",
+        "options": [
+            "Calculate the checksum",
+            "Encapsulate the data in an IP datagram",
+            "Send the packet to the queue",
+            "Decrease the TTL"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What happens if the 'Do not fragment' bit is set and the packet size exceeds the MTU?",
+        "options": [
+            "The packet is fragmented",
+            "The packet is discarded",
+            "The packet is sent anyway",
+            "An error is reported to the sender"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which field in the Reassembly Table identifies a specific datagram and its fragments?",
+        "options": [
+            "State",
+            "Source IP address",
+            "Datagram ID",
+            "Timeout"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What happens if the TTL field in an IP packet reaches 0?",
+        "options": [
+            "The packet is discarded",
+            "The packet is forwarded to the next router",
+            "The packet is reassembled",
+            "The packet is sent back to the source"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the role of the Fragmentation Module?",
+        "options": [
+            "Add headers to packets",
+            "Divide packets into smaller fragments if necessary",
+            "Reassemble fragments into the original datagram",
+            "Route packets to the next hop"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What does the Reassembly Module do if a fragment's timeout expires?",
+        "options": [
+            "Sends the fragment to the next hop",
+            "Discards all fragments of the datagram",
+            "Reassembles the fragments",
+            "Sends a timeout notification to the sender"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What information does the MTU table provide?",
+        "options": [
+            "Maximum Transfer Unit for each network interface",
+            "Routing information for the next hop",
+            "Checksum validation rules",
+            "Timeout values for packet delivery"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "Which module calculates the checksum for an IP packet?",
+        "options": [
+            "Reassembly Module",
+            "Header Adding Module",
+            "Processing Module",
+            "Fragmentation Module"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What happens when a packet is received with a destination address 127.x.y.z?",
+        "options": [
+            "It is sent to the reassembly module",
+            "It is forwarded to the next router",
+            "It is discarded",
+            "It is sent back to the source"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the function of the forwarding module?",
+        "options": [
+            "Reassemble packets",
+            "Find the next-hop IP address and interface",
+            "Calculate the checksum",
+            "Fragment packets"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which field in the Reassembly Table indicates whether all fragments have arrived?",
+        "options": [
+            "State",
+            "Fragments",
+            "Timeout",
+            "Datagram ID"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What does the 'M bit' signify in the reassembly process?",
+        "options": [
+            "More fragments are expected",
+            "The packet is the first fragment",
+            "The packet is the last fragment",
+            "The packet is ready for delivery"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What module determines the maximum packet size for a given network interface?",
+        "options": [
+            "Processing Module",
+            "Header Adding Module",
+            "Fragmentation Module",
+            "Reassembly Module"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the purpose of the routing table in the IP protocol?",
+        "options": [
+            "Store packet headers",
+            "Find the next-hop IP address",
+            "Verify checksums",
+            "Store fragmented packets"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What happens if all fragments of a datagram are successfully received?",
+        "options": [
+            "The datagram is discarded",
+            "The fragments are reassembled and sent to the upper-layer protocol",
+            "The fragments are stored for future use",
+            "The datagram is sent back to the source"
+        ],
+        "correct": 1
+    },
+	    {
+        "question": "What does the Record Route option in IP protocol do?",
+        "options": [
+            "Logs IP addresses of routers the packet traverses",
+            "Enforces an exact path for the packet",
+            "Records timestamps at each router",
+            "Allows specific intermediate routers"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "Which option enforces an exact path for a packet to follow?",
+        "options": [
+            "Loose Source Route",
+            "Strict Source Route",
+            "Record Route",
+            "Timestamp"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the purpose of the Loose Source Route option?",
+        "options": [
+            "Logs all the IP addresses traversed by the packet",
+            "Allows specific intermediate routers but flexible paths",
+            "Records timestamps at each router",
+            "Enforces an exact path for the packet"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What information does the Timestamp option in IP protocol record?",
+        "options": [
+            "The time-to-live (TTL) at each router",
+            "The IP addresses of all routers traversed",
+            "Timestamps at each router",
+            "The size of the packet at each hop"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the primary purpose of the Record Route option?",
+        "options": [
+            "Network performance measurement",
+            "Route tracing and diagnostics",
+            "Packet encryption",
+            "Controlled routing"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which IP option is most useful for measuring latency and analyzing network performance?",
+        "options": [
+            "Record Route",
+            "Timestamp",
+            "Strict Source Route",
+            "Loose Source Route"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "When would the Strict Source Route option be used?",
+        "options": [
+            "To record all intermediate IP addresses",
+            "To enforce a specific, controlled routing path",
+            "To measure network latency",
+            "To allow flexible routing with control over intermediate hops"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the key difference between Strict Source Route and Loose Source Route?",
+        "options": [
+            "Strict Source Route allows flexible paths; Loose Source Route enforces an exact path",
+            "Strict Source Route records timestamps; Loose Source Route records IP addresses",
+            "Strict Source Route enforces an exact path; Loose Source Route allows specific intermediate routers but flexible paths",
+            "There is no difference between them"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "Which IP option allows tracing the route of a packet for diagnostics?",
+        "options": [
+            "Record Route",
+            "Timestamp",
+            "Strict Source Route",
+            "Loose Source Route"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the main benefit of using the Loose Source Route option?",
+        "options": [
+            "It ensures high security",
+            "It provides flexible routing with some control over the route",
+            "It records the time taken at each hop",
+            "It restricts packets to a specific, predefined path"
+        ],
+        "correct": 1
+    },
+	    {
+        "question": "What does the M bit in the IP header signify?",
+        "options": [
+            "More fragments are expected",
+            "The datagram is the last fragment",
+            "The datagram is the first fragment",
+            "No more fragments are expected"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What does the D bit in the IP header signify?",
+        "options": [
+            "Do not fragment the datagram",
+            "Deliver the datagram directly to the destination",
+            "Delay the datagram processing",
+            "Datagram has been fragmented"
+        ],
+        "correct": 0
+    }
+]
+;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            document.getElementById("question").innerText = currentQuestion.question;
+
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.className = "option";
+                optionElement.innerHTML = `
+                    <label>
+                        <input type="radio" name="option" value="${index}"> ${option}
+                    </label>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function submitAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const answer = parseInt(selectedOption.value);
+            if (answer === quizData[currentQuestionIndex].correct) {
+                score++;
+                document.getElementById("result").innerText = "Correct!";
+            } else {
+                document.getElementById("result").innerText = "Incorrect. The correct answer was: " + quizData[currentQuestionIndex].options[quizData[currentQuestionIndex].correct];
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                setTimeout(() => {
+                    document.getElementById("result").innerText = "";
+                    loadQuestion();
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    document.querySelector(".quiz-container").innerHTML = `<h2>Your Score: ${score} / ${quizData.length}</h2>`;
+                }, 1500);
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
