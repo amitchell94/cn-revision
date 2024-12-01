@@ -256,6 +256,106 @@
             "It retries transmissions on error"
         ],
         "correct": 0
+    },
+    {
+        "question": "What does the control block module manage in UDP?",
+        "options": [
+            "Queues for datagrams",
+            "Control block table",
+            "Outgoing datagrams",
+            "Network routes"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the first step when a process requests a port number from the operating system?",
+        "options": [
+            "Allocate a queue",
+            "Create a control block table entry",
+            "Search the control block table for a FREE entry",
+            "Send a UDP datagram"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What happens to a control block table entry when no FREE entry is found?",
+        "options": [
+            "The request is denied",
+            "An existing entry is deleted using a predefined strategy",
+            "The control block table is expanded",
+            "The process is terminated"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What fields must be passed to the control block module to create an entry?",
+        "options": [
+            "State and queue number",
+            "Queue number and port number",
+            "Process ID and port number",
+            "Process name and queue number"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What happens when a FREE entry is found in the control block table?",
+        "options": [
+            "It is deleted",
+            "A new entry is created with the state IN-USE",
+            "It is locked for the process",
+            "The queue field is cleared"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which of the following is NOT a field in a control block table entry?",
+        "options": [
+            "State",
+            "Process ID",
+            "Queue size",
+            "Port number"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What state is assigned to a control block table entry that is available for use?",
+        "options": [
+            "ALLOCATED",
+            "IN-USE",
+            "FREE",
+            "PENDING"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is the predefined strategy used for when no FREE entry is found in the control block table?",
+        "options": [
+            "Discarding incoming datagrams",
+            "Deleting an entry to free up space",
+            "Adding a new control block field",
+            "Reinitializing the control block table"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "How is the process uniquely identified in a control block table entry?",
+        "options": [
+            "By queue number",
+            "By port number",
+            "By process ID",
+            "By state"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What does the control block module do after creating a new entry?",
+        "options": [
+            "Assigns a queue number",
+            "Sets the state to FREE",
+            "Marks the entry as IN-USE",
+            "Closes existing queues"
+        ],
+        "correct": 2
     }
 ]
 
